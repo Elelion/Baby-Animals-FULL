@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.304,E:\C++\Project1.cbproj=E:\C++\Projects\Baby world\Baby Animals.cbproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.419,=E:\C++\Projects\Baby world\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.477,E:\C++\1\Unit3.cpp=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.072,=E:\C++\1\Unit3.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.667,E:\C++\Projects\Baby world\Baby Animals\res\Animals\Wild\Boar.jpg=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.457,E:\C++\1\Unit2.cpp=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.058,=E:\C++\1\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.501,=E:\C++\Projects\Baby world\Baby Animals\res\Animals\Wild\Boar.jpg</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.845,=E:\C++\Projects\Baby world\Baby Animals\res\Animals\Дикие\Boar.jpg</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.733,E:\C++\Unit1.h=E:\C++\Projects\Baby world\Unit1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.338,=E:\C++\Projects\Baby world\Baby Animals\Unit4.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.720,E:\C++\Project1PCH1.h=E:\C++\Projects\Baby world\Baby AnimalsPCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.548,E:\C++\1\Unit4.cpp=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.859,=E:\C++\1\Unit4.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.513,=E:\C++\Project1PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.357,=E:\C++\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.733,E:\C++\Unit1.cpp=E:\C++\Projects\Baby world\Unit1.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.502,=E:\C++\Projects\Baby world\Baby Animals\Unit3.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.733,E:\C++\Unit1.fmx=E:\C++\Projects\Baby world\Unit1.fmx</Transaction>
+  </Transactions>
+	<MobileDevice>AFCE58405CFC1108D682080D7DB0723</MobileDevice>
+	<BT_BuildType>AppStore</BT_BuildType>
+</BorlandProject>

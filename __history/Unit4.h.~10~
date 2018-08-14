@@ -1,0 +1,178 @@
+//---------------------------------------------------------------------------
+
+#ifndef Unit4H
+#define Unit4H
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <FMX.Controls.hpp>
+#include <FMX.Forms.hpp>
+#include <FMX.StdCtrls.hpp>
+#include <FMX.TabControl.hpp>
+#include <FMX.Types.hpp>
+//---------------------------------------------------------------------------
+class TForm4 : public TForm
+{
+__published:	// IDE-managed Components
+	TTabControl *TabControl1;
+	TTabItem *TabItemHome;
+	TTabItem *TabItemWild;
+	TTabItem *TabItemAir;
+	TTabItem *TabItemWater;
+	TTabItem *TabItemInsects;
+	TTabControl *TabControl2;
+	TTabItem *TI_Buffalo;
+	TTabItem *TI_Camel;
+	TTabItem *TI_Cat;
+	TTabItem *TI_Cock;
+	TTabItem *TI_Cow;
+	TTabItem *TI_Dog;
+	TTabItem *TI_Donkey;
+	TTabItem *TI_Goat;
+	TTabItem *TI_Hens;
+	TTabItem *TI_Horse;
+	TTabItem *TI_Pig;
+	TTabItem *TI_Rabbit;
+	TTabItem *TI_Sheep;
+	TTabItem *TI_Turkey;
+	TLabel *LabelBuffalo;
+	TLabel *LabelCamel;
+	TLabel *LabelCat;
+	TLabel *LabelCock;
+	TLabel *LabelCow;
+	TLabel *LabelDog;
+	TLabel *LabelDonkey;
+	TLabel *LabelGoat;
+	TLabel *LabelHens;
+	TLabel *LabelHorse;
+	TLabel *LabelPig;
+	TLabel *LabelRabbit;
+	TLabel *LabelSheep;
+	TLabel *LabelTurkey;
+	TTabControl *TabControl3;
+	TTabItem *TI_Arctic_fox;
+	TTabItem *TI_Bear;
+	TTabItem *TI_Boar;
+	TTabItem *TI_Chameleon;
+	TTabItem *TI_Chipmunk;
+	TTabItem *TI_Deer;
+	TTabItem *TI_Elephant;
+	TTabItem *TI_Fox;
+	TTabItem *TI_Giraffe;
+	TTabItem *TI_Hedgehog;
+	TTabItem *TI_Koala;
+	TTabItem *TI_Lion;
+	TTabItem *TI_Lynx;
+	TTabControl *TabControl4;
+	TTabItem *TI_Marmot;
+	TTabItem *TI_Monkey;
+	TTabItem *TI_Panda;
+	TTabItem *TI_Polar_bear;
+	TTabItem *TI_Raccoon;
+	TTabItem *TI_Rhinoceros;
+	TTabItem *TI_Snake;
+	TTabItem *TI_Snow_leopard;
+	TTabItem *TI_Squirrel;
+	TTabItem *TI_Tiger;
+	TTabItem *TI_Wolf;
+	TTabItem *TI_Zebra;
+	TLabel *LabelArctic_fox;
+	TLabel *LabelBear;
+	TLabel *LabelBoar;
+	TLabel *LabelChameleon;
+	TLabel *LabelChipmunk;
+	TLabel *LabelDeer;
+	TLabel *LabelElephant;
+	TLabel *LabelFox;
+	TLabel *LabelGiraffe;
+	TLabel *LabelHedgehog;
+	TLabel *LabelKoala;
+	TLabel *LabelLion;
+	TLabel *LabelLynx;
+	TLabel *LabelMarmot;
+	TLabel *LabelMonkey;
+	TLabel *LabelPanda;
+	TLabel *LabelPolar_bear;
+	TLabel *LabelRaccoon;
+	TLabel *LabelRhinoceros;
+	TLabel *LabelSnake;
+	TLabel *LabelSnow_leopard;
+	TLabel *LabelSquirrel;
+	TLabel *LabelTiger;
+	TLabel *LabelWolf;
+	TLabel *LabelZebra;
+	TTabControl *TabControl5;
+	TTabItem *TabItem1;
+	TTabItem *TabItem2;
+	TTabItem *TabItem3;
+	TTabItem *TabItem4;
+	TTabItem *TabItem5;
+	TTabItem *TabItem6;
+	TTabItem *TabItem7;
+	TTabItem *TabItem8;
+	TTabItem *TabItem9;
+	TTabItem *TabItem10;
+	TTabItem *TabItem11;
+	TTabItem *TabItem12;
+	TTabControl *TabControl6;
+	TTabItem *TabItem13;
+	TTabItem *TabItem14;
+	TTabItem *TabItem15;
+	TTabItem *TabItem16;
+	TTabItem *TabItem17;
+	TTabItem *TI_Titmouse;
+	TTabItem *TI_Woodpecker;
+	TTabItem *TI_Raven;
+	TTabItem *TI_Rook;
+	TTabItem *TI_Swallow;
+	TTabItem *TI_Bullfinch;
+	TTabItem *TI_Jay;
+	TLabel *LabelAlbatross;
+	TLabel *LabelDeadlock;
+	TLabel *LabelDove;
+	TLabel *LabelDuck;
+	TLabel *LabelEagle;
+	TLabel *LabelFalcon;
+	TLabel *LabelFlamingo;
+	TLabel *LabelGoldfinch;
+	TLabel *LabelHeron;
+	TLabel *LabelLark;
+	TLabel *LabelOwl;
+	TLabel *LabelParrot;
+	TLabel *LabelPelican;
+	TLabel *LabelPheasant;
+	TLabel *LabelSeagull;
+	TLabel *LabelSparrow;
+	TLabel *LabelStork;
+	TLabel *LabelTitmouse;
+	TLabel *LabelWoodpecker;
+	TLabel *LabelRaven;
+	TLabel *LabelRook;
+	TLabel *LabelSwallow;
+	TLabel *LabelBullfinch;
+	TLabel *LabelJay;
+	TTabControl *TabControl7;
+	TTabItem *TabItem18;
+	TTabItem *TabItem19;
+	TTabItem *TabItem20;
+	TTabItem *TabItem21;
+	TTabItem *TabItem22;
+	TTabItem *TabItem23;
+	TTabItem *TabItem24;
+	TTabItem *TabItem25;
+	TTabItem *TabItem26;
+	TTabItem *TabItem27;
+	TTabControl *TabControl8;
+	TTabItem *TabItem28;
+	TTabItem *TabItem29;
+	TTabItem *TabItem30;
+	TTabItem *TabItem31;
+	TTabItem *TabItem32;
+	TTabItem *TabItem33;
+private:	// User declarations
+public:		// User declarations
+	__fastcall TForm4(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TForm4 *Form4;
+//---------------------------------------------------------------------------
+#endif

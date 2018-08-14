@@ -1,0 +1,2437 @@
+//---------------------------------------------------------------------------
+
+#include <fmx.h>
+#include <System.IOUtils.hpp>
+#include <System.SysUtils.hpp>
+#pragma hdrstop
+
+#include "Unit1.h"
+#include "Unit2.h"
+#include "Unit3.h"
+
+int F3_LeafletX1, F3_LeafletY1, F3_i1, F3_j1; //Координаты для 1го листочка
+int F3_LeafletX2, F3_LeafletY2, F3_i2, F3_j2; //Координаты для 2го листочка
+int F3_LeafletY3, F3_i3 ; //Координаты для 3го листочка (падает строго в низ)
+
+int F3_AddScore1Y1, F3_i4; //+25 score
+int F3_AddScore2Y1, F3_i5; //+50 score
+int F3_SubScoreY1,  F3_i6;   //-10 score
+
+int SphereQuestX1, SphereQuestY1, F3_SQ_i1, F3_SQ_j1; //Координаты для SphereQuest шарика.
+
+int HARD_TEST = 0; //Для шага теста
+int SCORE = 0; //Для начисления очков
+int ERR_SCORE = 0; //Для подсчета ошибок
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma resource "*.fmx"
+TForm3 *Form3;
+
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//RANDOM FOR HARD TESTING.......................................................
+void HARD_0st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Albatross.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Shark.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Arctic-fox.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snow-leopard.jpg");
+}
+
+void HARD_1st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sea-slope.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Falcon.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jay.jpg"); //BONUS
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Stork.jpg");
+}
+
+void HARD_2st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Falcon.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Shark.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dolphin.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Monkey.jpg");
+}
+
+void HARD_3st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jay.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bee.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pelican.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Duck.jpg");
+}
+
+void HARD_4st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Penguin.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Albatross.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Stork.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Donkey.jpg");
+}
+
+void HARD_5st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Arctic-fox.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Donkey.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Monkey.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pelican.jpg");
+}
+
+void HARD_6st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Donkey.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jay.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Seagull.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Panda.jpg");
+}
+
+void HARD_7st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pelican.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dolphin.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Albatross.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Shark.jpg");
+}
+
+void HARD_8st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squid.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sea-slope.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turtle.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jellyfish.jpg");
+}
+
+void HARD_9st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dolphin.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Seagull.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jay.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deadlock.jpg");
+}
+
+void HARD_10st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Monkey.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pelican.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sea-slope.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Scorpion.jpg");
+}
+
+void HARD_11st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bee.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squid.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deadlock.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Albatross.jpg");
+}
+
+void HARD_12st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Seagull.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snow-leopard.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Duck.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sea-slope.jpg");
+}
+
+void HARD_13st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Stork.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deadlock.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jellyfish.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sparrow.jpg");
+}
+
+void HARD_14st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ladybug.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turtle.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Falcon.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Koala.jpg");
+}
+
+void HARD_15st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deadlock.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Penguin.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Koala.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turtle.jpg");
+}
+
+void HARD_16st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Duck.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Koala.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snow-leopard.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Horse.jpg");
+}
+
+void HARD_17st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turtle.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ladybug.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sparrow.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Perch.jpg");
+}
+
+void HARD_18st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Koala.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Panda.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hedgehog.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Mantis.jpg");
+}
+
+void HARD_19st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Marmot.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jellyfish.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Perch.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ladybug.jpg");
+}
+
+void HARD_20st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jellyfish.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sparrow.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Heron.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bug.jpg");
+}
+
+void HARD_21st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sparrow.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Duck.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squid.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Fox.jpg");
+}
+
+void HARD_22st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rabbit.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Heron.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Scorpion.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Echinoid.jpg");
+}
+
+void HARD_23st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Heron.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rabbit.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Mantis.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cock.jpg");
+}
+
+void HARD_24st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Fox.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Horse.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Echinoid.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jay.jpg");
+}
+
+void HARD_25st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squirrel.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Perch.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Penguin.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hedgehog.jpg");
+}
+
+void HARD_26st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Perch.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Scorpion.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cock.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Falcon.jpg");
+}
+
+void HARD_27st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Shark.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squirrel.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ladybug.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dove.jpg");
+}
+
+void HARD_28st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bug.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goat.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dove.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squid.jpg");
+}
+
+void HARD_29st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goat.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Mantis.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squirrel.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Heron.jpg");
+}
+
+void HARD_30st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raccoon.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Monkey.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goat.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bullfinch.jpg");
+}
+
+void HARD_31st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Scorpion.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Marmot.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rabbit.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squirrel.jpg");
+}
+
+void HARD_32st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dove.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cock.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bullfinch.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Penguin.jpg");
+}
+
+void HARD_33st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Mantis.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dove.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bee.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Woodpecker.jpg");
+}
+
+void HARD_34st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cachalot.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bullfinch.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Horse.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dolphin.jpg");
+}
+
+void HARD_35st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bear.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raccoon.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Woodpecker.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rabbit.jpg");
+}
+
+void HARD_36st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bullfinch.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Woodpecker.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raccoon.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Eagle.jpg");
+}
+
+void HARD_37st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Wolf.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bear.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Donkey.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Marmot.jpg");
+}
+
+void HARD_38st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Woodpecker.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cachalot.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Spider.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hens.jpg");
+}
+
+void HARD_39st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cock.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lynx.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Marmot.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cow.jpg");
+}
+
+void HARD_40st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snake.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Spider.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jay.jpg"); //BONUS
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deer.jpg");
+}
+
+void HARD_41st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Zebra.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Wolf.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cow.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raccoon.jpg");
+}
+
+void HARD_42st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hedgehog.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cow.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deer.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Giraffe.jpg");
+}
+
+void HARD_43st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sheep.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snake.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lynx.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goat.jpg");
+}
+
+void HARD_44st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Horse.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turkey.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bear.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Giraffe.jpg");
+}
+
+void HARD_45st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cow.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bug.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sheep.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Spider.jpg");
+}
+
+void HARD_46st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Swallow.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sheep.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snake.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goldfinch.jpg");
+}
+
+void HARD_47st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Grasshopper.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deer.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hens.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raven.jpg");
+}
+
+void HARD_48st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turkey.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Swallow.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Eagle.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bee.jpg");
+}
+
+void HARD_49st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lynx.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lion.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Wolf.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tiger.jpg");
+}
+
+void HARD_50st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Boar.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Giraffe.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tiger.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sheep.jpg");
+}
+
+void HARD_51st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Schyuka.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Grasshopper.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raven.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snake.jpg");
+}
+
+void HARD_52st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Giraffe.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hens.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goldfinch.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Parrot.jpg");
+}
+
+void HARD_53st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lion.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Schyuka.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cachalot.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pig.jpg");
+}
+
+void HARD_54st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rhinoceros.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Boar.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Schyuka.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Polar-bear.jpg");
+}
+
+void HARD_55st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rook.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Eagle.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Swallow.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bumblebee.jpg");
+}
+
+void HARD_56st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Spider.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Echinoid.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bug.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Schyuka.jpg");
+}
+
+void HARD_57st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lark.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rhinoceros.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Parrot.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lynx.jpg");
+}
+
+void HARD_58st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Eagle.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lark.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bumblebee.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Boar.jpg");
+}
+
+void HARD_59st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dragonfly.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raven.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lark.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rook.jpg");
+}
+
+void HARD_60st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Butterfly.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goldfinch.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turkey.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lark.jpg");
+}
+
+void HARD_61st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Starfish.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dragonfly.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Grasshopper.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Titmouse.jpg");
+}
+
+void HARD_62st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cat.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Walrus.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Boar.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Wolf.jpg");
+}
+
+void HARD_63st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Walrus.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Buffalo.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chipmunk.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Camel.jpg");
+}
+
+void HARD_64st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raven.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Starfish.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dragonfly.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Grasshopper.jpg");
+}
+
+void HARD_65st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hens.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bumblebee.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Panda.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turkey.jpg");
+}
+
+void HARD_66st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Crab.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cat.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lion.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Flamingo.jpg");
+}
+
+void HARD_67st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goldfinch.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Crab.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Starfish.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cachalot.jpg");
+}
+
+void HARD_68st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Echinoid.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tiger.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dog.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tarantula.jpg");
+}
+
+void HARD_69st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Buffalo.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Zebra.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Walrus.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Starfish.jpg");
+}
+
+void HARD_70st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Panda.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chipmunk.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cat.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dog.jpg");
+}
+
+void HARD_71st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bumblebee.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hedgehog.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Titmouse.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dragonfly.jpg");
+}
+
+void HARD_72st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deer.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Parrot.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Zebra.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Swallow.jpg");
+}
+
+void HARD_73st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tiger.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Butterfly.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rhinoceros.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cat.jpg");
+}
+
+void HARD_74st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Camel.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Fox.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Butterfly.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Zebra.jpg");
+}
+
+void HARD_75st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dog.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Camel.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pig.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Walrus.jpg");
+}
+
+void HARD_76st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snail.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dog.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Fox.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bear.jpg");
+}
+
+void HARD_77st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Octopus.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Titmouse.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Polar-bear.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chipmunk.jpg");
+}
+
+void HARD_78st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chameleon.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Octopus.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Crab.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lion.jpg");
+}
+
+void HARD_79st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ant.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chameleon.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Camel.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rhinoceros.jpg");
+}
+
+void HARD_80st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chipmunk.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snail.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Owl.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Butterfly.jpg");
+}
+
+void HARD_81st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Titmouse.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pig.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snail.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Owl.jpg");
+}
+
+void HARD_82st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Elephant.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ant.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pheasant.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Crab.jpg");
+}
+
+void HARD_83st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Parrot.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Elephant.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rook.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pheasant.jpg");
+}
+
+void HARD_84st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snow-leopard.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Owl.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Flamingo.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Elephant.jpg");
+}
+
+void HARD_85st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Owl.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Polar-bear.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Buffalo.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Octopus.jpg");
+}
+
+void HARD_86st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tarantula.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Flamingo.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Octopus.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chameleon.jpg");
+}
+
+void HARD_87st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Flamingo.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Stork.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ant.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snail.jpg");
+}
+
+void HARD_88st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Polar-bear.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tarantula.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chameleon.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Seagull.jpg");
+}
+
+void HARD_89st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pheasant.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rook.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Elephant.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Buffalo.jpg");
+}
+
+void HARD_90st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pig.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pheasant.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tarantula.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ant.jpg");
+}
+
+void HARD_91st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goat.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Arctic-fox.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Giraffe.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deadlock.jpg");
+}
+
+void HARD_92st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Koala.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lynx.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Shark.jpg");
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Arctic-fox.jpg");
+}
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//RANDOM FOR INSECTS_ANIMAL.....................................................
+void INSECTS_0st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ant.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ladybug.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bumblebee.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tarantula.jpg"); //4
+}
+
+void INSECTS_1st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Spider.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ant.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tarantula.jpg"); //2
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Mantis.jpg"); //4
+}
+
+void INSECTS_2st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bug.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tarantula.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ant.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Scorpion.jpg"); //4
+}
+
+void INSECTS_3st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tarantula.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Grasshopper.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Mantis.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ant.jpg"); //4
+}
+
+void INSECTS_4st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bee.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Spider.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dragonfly.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bumblebee.jpg"); //4
+}
+
+void INSECTS_5st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bumblebee.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bee.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Scorpion.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Butterfly.jpg"); //4
+}
+
+void INSECTS_6st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Mantis.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bug.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bee.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dragonfly.jpg"); //4
+}
+
+void INSECTS_7st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Butterfly.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dragonfly.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Grasshopper.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bee.jpg"); //4
+}
+
+void INSECTS_8st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Grasshopper.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Butterfly.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Spider.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bug.jpg"); //4
+}
+
+void INSECTS_9st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ladybug.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Scorpion.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bug.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Grasshopper.jpg"); //4
+}
+
+void INSECTS_10st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dragonfly.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bumblebee.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ladybug.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Spider.jpg"); //4
+}
+
+void INSECTS_11st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Scorpion.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Mantis.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Butterfly.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Ladybug.jpg"); //4
+}
+//.................................................END RANDOM FOR INSECTS_ANIMAL
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//RANDOM FOR WATER_ANIMAL.......................................................
+void WATER_0st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Walrus.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Echinoid.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Perch.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dolphin.jpg"); //4
+}
+
+void WATER_1st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cachalot.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Walrus.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squid.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Perch.jpg"); //4
+}
+
+void WATER_2st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Starfish.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dolphin.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Octopus.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squid.jpg"); //4
+}
+
+void WATER_3st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dolphin.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squid.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Echinoid.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turtle.jpg"); //4
+}
+
+void WATER_4st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jellyfish.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cachalot.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dolphin.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Shark.jpg"); //4
+}
+
+void WATER_5st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Schyuka.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Starfish.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Shark.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sea-slope.jpg"); //4
+}
+
+void WATER_6st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squid.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Schyuka.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Walrus.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snail.jpg"); //4
+}
+
+void WATER_7st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Penguin.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jellyfish.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Starfish.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Crab.jpg"); //4
+}
+
+void WATER_8st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turtle.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Octopus.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cachalot.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Starfish.jpg"); //4
+}
+
+void WATER_9st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Crab.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turtle.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jellyfish.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Walrus.jpg"); //4
+}
+
+void WATER_10st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snail.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Crab.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Schyuka.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Octopus.jpg"); //4
+}
+
+void WATER_11st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Shark.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Penguin.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turtle.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Echinoid.jpg"); //4
+}
+
+void WATER_12st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sea-slope.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snail.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Crab.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Schyuka.jpg"); //4
+}
+
+void WATER_13st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Perch.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sea-slope.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snail.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cachalot.jpg"); //4
+}
+
+void WATER_14st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Echinoid.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Shark.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Penguin.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jellyfish.jpg"); //4
+}
+
+void WATER_15st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Octopus.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Perch.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sea-slope.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Penguin.jpg"); //4
+}
+//...................................................END RANDOM FOR WATER_ANIMAL
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//RANDOM FOR AIR_ANIMAL.........................................................
+void AIR_0st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Eagle.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Stork.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pheasant.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rook.jpg"); //4
+}
+
+void AIR_1st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Falcon.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Eagle.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Swallow.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sparrow.jpg"); //4
+}
+
+void AIR_2st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goldfinch.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dove.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Stork.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lark.jpg"); //4
+}
+
+void AIR_3st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Swallow.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goldfinch.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rook.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pelican.jpg"); //4
+}
+
+void AIR_4st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deadlock.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Swallow.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lark.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Heron.jpg"); //4
+}
+
+void AIR_5st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Titmouse.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pheasant.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Eagle.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bullfinch.jpg"); //4
+}
+
+void AIR_6st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Albatross.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Duck.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Flamingo.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Eagle.jpg"); //4
+}
+
+void AIR_7st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Woodpecker.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deadlock.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dove.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Seagull.jpg"); //4
+}
+
+void AIR_8st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Duck.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Titmouse.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sparrow.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dove.jpg"); //4
+}
+
+void AIR_9st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raven.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Falcon.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deadlock.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Stork.jpg"); //4
+}
+
+void AIR_10st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Stork.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Albatross.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Heron.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Parrot.jpg"); //4
+}
+
+void AIR_11st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lark.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Flamingo.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Titmouse.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deadlock.jpg"); //4
+}
+
+void AIR_12st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pelican.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Woodpecker.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Duck.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jay.jpg"); //4
+}
+
+void AIR_13st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dove.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raven.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Seagull.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Swallow.jpg"); //4
+}
+
+void AIR_14st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sparrow.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lark.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Albatross.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Woodpecker.jpg"); //4
+}
+
+void AIR_15st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pheasant.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Heron.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bullfinch.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Titmouse.jpg"); //4
+}
+
+void AIR_16st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Flamingo.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pelican.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raven.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pheasant.jpg"); //4
+}
+
+void AIR_17st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Owl.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sparrow.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Parrot.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Flamingo.jpg"); //4
+}
+
+void AIR_18st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Parrot.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Seagull.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jay.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goldfinch.jpg"); //4
+}
+
+void AIR_19st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Seagull.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bullfinch.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Woodpecker.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Falcon.jpg"); //4
+}
+
+void AIR_20st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jay.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Owl.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Falcon.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raven.jpg"); //4
+}
+
+void AIR_21st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rook.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Parrot.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goldfinch.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Duck.jpg"); //4
+}
+
+void AIR_22st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Heron.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rook.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Owl.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Albatross.jpg"); //4
+}
+
+void AIR_23st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bullfinch.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Jay.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pelican.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Owl.jpg"); //4
+}
+//.....................................................END RANDOM FOR AIR_ANIMAL
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//RANDOM FOR WILD_ANIMAL........................................................
+void WILD_0st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chipmunk.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lynx.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tiger.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Polar-bear.jpg"); //4
+}
+
+void WILD_1st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Arctic-fox.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chipmunk.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rhinoceros.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raccoon.jpg"); //4
+}
+
+void WILD_2st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Giraffe.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lion.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chipmunk.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lynx.jpg"); //4
+}
+
+void WILD_3st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bear.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rhinoceros.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lynx.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Zebra.jpg"); //4
+}
+
+void WILD_4st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Elephant.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Giraffe.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raccoon.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snake.jpg"); //4
+}
+
+void WILD_5st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Koala.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bear.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Polar-bear.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deer.jpg"); //4
+}
+
+void WILD_6st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lynx.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Arctic-fox.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lion.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snow-leopard.jpg"); //4
+}
+
+void WILD_7st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Monkey.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Polar-bear.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snow-leopard.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chipmunk.jpg"); //4
+}
+
+void WILD_8st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Marmot.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Monkey.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bear.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Fox.jpg"); //4
+}
+
+void WILD_9st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Panda.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Koala.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snake.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Bear.jpg"); //4
+}
+
+void WILD_10st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raccoon.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Wolf.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Giraffe.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lion.jpg"); //4
+}
+
+void WILD_11st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Polar-bear.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Elephant.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Arctic-fox.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Wolf.jpg"); //4
+}
+
+void WILD_12st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Lion.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snow-leopard.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Fox.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tiger.jpg"); //4
+}
+
+void WILD_13st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rhinoceros.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Marmot.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Koala.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squirrel.jpg"); //4
+}
+
+void WILD_14st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deer.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Raccoon.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Elephant.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chameleon.jpg"); //4
+}
+
+void WILD_15st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hedgehog.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Panda.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Wolf.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Arctic-fox.jpg"); //4
+}
+
+void WILD_16st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Boar.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deer.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Zebra.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Giraffe.jpg"); //4
+}
+
+void WILD_17st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squirrel.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Boar.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Monkey.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rhinoceros.jpg"); //4
+}
+
+void WILD_18st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snake.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hedgehog.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chameleon.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Koala.jpg"); //4
+}
+
+void WILD_19st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Fox.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snake.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Panda.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Marmot.jpg"); //4
+}
+
+void WILD_20st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tiger.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chameleon.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Marmot.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Monkey.jpg"); //4
+}
+
+void WILD_21st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Snow-leopard.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Tiger.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Boar.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Elephant.jpg"); //4
+}
+
+void WILD_22st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Wolf.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squirrel.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Deer.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hedgehog.jpg"); //4
+}
+
+void WILD_23st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Chameleon.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Zebra.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Squirrel.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Panda.jpg"); //4
+}
+
+void WILD_24st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Zebra.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Fox.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hedgehog.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Boar.jpg"); //4
+}
+//....................................................END RANDOM FOR WILD_ANIMAL
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//RANDOM FOR HOME_ANIMAL........................................................
+void HOME_0st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Buffalo.jpg");//1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dog.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Horse.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cock.jpg");   //4
+}
+
+void HOME_1st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Camel.jpg");  //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Horse.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Donkey.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cow.jpg");  //1
+}
+
+void HOME_2st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cat.jpg");  //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pig.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dog.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sheep.jpg"); //4
+}
+
+void HOME_3st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cock.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Camel.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Buffalo.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turkey.jpg");  //4
+}
+
+void HOME_4st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cow.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Buffalo.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Horse.jpg");  //--
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Donkey.jpg"); //4
+}
+
+void HOME_5st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dog.jpg");  //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rabbit.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hens.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goat.jpg");  //4
+}
+
+void HOME_6st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Donkey.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cat.jpg");  //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sheep.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Horse.jpg"); //4
+}
+
+void HOME_7st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goat.jpg");  //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Donkey.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sheep.jpg");  //--
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rabbit.jpg"); //4
+}
+
+
+void HOME_8st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rabbit.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hens.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cat.jpg");  //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Dog.jpg");  //4
+}
+
+void HOME_9st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pig.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cock.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Camel.jpg");  //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Buffalo.jpg"); //4
+}
+
+void HOME_10st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pig.jpg");  //--
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cow.jpg");  //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goat.jpg"); //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Camel.jpg");   //4
+}
+
+void HOME_11st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turkey.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rabbit.jpg"); //--
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cow.jpg");  //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hens.jpg"); //4
+}
+
+void HOME_12st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sheep.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goat.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pig.jpg");  //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turkey.jpg"); //--
+}
+
+void HOME_13st()
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hens.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turkey.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cock.jpg");  //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cat.jpg");    //4
+}
+
+void HOME_ADD_1() //Дополнительный блок для Horse, Sheep, Rabbit, Pig
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Horse.jpg"); //1
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Sheep.jpg"); //2
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Rabbit.jpg");  //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Pig.jpg");//4
+}
+
+void HOME_ADD_2() //Дополнительный блок для Horse, Sheep, Rabbit, Pig
+{
+	Form3->Image1->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Cock.jpg");
+	Form3->Image2->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Goat.jpg");
+	Form3->Image3->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Turkey.jpg");  //3
+	Form3->Image4->Bitmap->LoadFromFile(IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Hens.jpg");
+}
+//....................................................END RANDOM FOR HOME_ANIMAL
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//Сброс Image's, ANIMALS, COUNTERпри закрытии Form3.............................
+void RESET_PICTURES_FORM3()
+{
+	Form3->Image1->Visible = false;
+	Form3->Image2->Visible = false;
+	Form3->Image3->Visible = false;
+	Form3->Image4->Visible = false;
+
+	Form3->ANIMALS->Text = 0;
+	Form3->COUNTER->Text = 0;
+}
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//Отключаем различные компоненты (Timer's и.т.п.)...............................
+void RESET_FORM3()
+{
+	Form3->TimerErrorHide->Enabled = false;
+
+//Таймеры для падения / раскачивания 1го листика
+	Form3->TimerLeaflet1Start->Enabled = false;
+	Form3->TimerLeaflet1End->Enabled = false;
+	Form3->TimerLeaflet1Left->Enabled = false;
+	Form3->TimerLeaflet1Right->Enabled = false;
+
+//Таймеры для падения / раскачивания 2го листика
+	Form3->TimerLeaflet2Start->Enabled = false;
+	Form3->TimerLeaflet2End->Enabled = false;
+	Form3->TimerLeaflet2Left->Enabled = false;
+	Form3->TimerLeaflet2Right->Enabled = false;
+
+//Таймеры для падения 3го листика
+	Form3->TimerLeaflet3Start->Enabled = false;
+	Form3->TimerLeaflet3End->Enabled = false;
+
+//Скрываем уведомление о загрузке.
+	Form3->Loading->Visible = false;
+
+//Сбрасываем счетчики для HardTest
+	HARD_TEST = 0;
+	SCORE = 0;
+	ERR_SCORE = 0;
+	Form3->HARD->Text = "HARD";
+
+//Шарики очков + / -
+	Form3->SubtractScore->Visible = false;
+	Form3->AddScore1->Visible = false;
+	Form3->AddScore2->Visible = false;
+
+//Отключаем таймеры для отображения очков +25, +50 и -10
+	Form3->TimerAddScore1Start->Enabled = false;
+	Form3->TimerAddScore1End->Enabled = false;
+
+	Form3->TimerAddScore2Start->Enabled = false;
+	Form3->TimerAddScore2End->Enabled = false;
+
+	Form3->TimerSubtractScoreStart->Enabled = false;
+	Form3->TimerSubtractScoreEnd->Enabled = false;
+
+//Отключаем таймеры включающие отображения очков
+	//For Image1
+	Form3->TimerAddScore1Image1->Enabled = false;
+	Form3->TimerAddScore2Image1->Enabled = false;
+	Form3->TimerSubScoreImage1->Enabled = false;
+	Form3->TimerSubtractScoreImage1->Enabled = false;
+
+	//For Image2
+	Form3->TimerAddScore1Image2->Enabled = false;
+	Form3->TimerAddScore2Image2->Enabled = false;
+	Form3->TimerSubScoreImage2->Enabled = false;
+	Form3->TimerSubtractScoreImage2->Enabled = false;
+
+	//For Image3
+	Form3->TimerAddScore1Image3->Enabled = false;
+	Form3->TimerAddScore2Image3->Enabled = false;
+	Form3->TimerSubScoreImage3->Enabled = false;
+	Form3->TimerSubtractScoreImage3->Enabled = false;
+
+	//For Image4
+	Form3->TimerAddScore1Image4->Enabled = false;
+	Form3->TimerAddScore2Image4->Enabled = false;
+	Form3->TimerSubScoreImage4->Enabled = false;
+	Form3->TimerSubtractScoreImage4->Enabled = false;
+
+//Скрываем статистику теста
+	Form3->LabelTextScore->Visible = false;
+	Form3->LabelScore->Visible = false;
+
+	Form3->LabelTextErrorScore->Visible = false;
+	Form3->LabelErrorScore->Visible = false;
+
+	Form3->LabelScore->Text = "";
+	Form3->LabelErrorScore->Text = "";
+
+//Отключаем таймеры озвучки
+	Form3->TimerAsk1->Enabled = false;
+	Form3->TimerAskVoice->Enabled = false;
+	Form3->TimerAsk2->Enabled = false;
+	Form3->TimerAnimalSound->Enabled = false;
+	Form3->TimerTestAsk->Enabled = false;
+	Form3->TimerTestVoice->Enabled = false;
+
+//Скрываем награды (медали)
+	Form3->MedalHome->Visible = false;
+	Form3->MedalWild->Visible = false;
+	Form3->MedalAir->Visible = false;
+	Form3->MedalWater->Visible = false;
+	Form3->MedalInsects->Visible = false;
+
+	Form3->SmallMedalHome->Visible = false;
+	Form3->SmallMedalWild->Visible = false;
+	Form3->SmallMedalAir->Visible = false;
+	Form3->SmallMedalWater->Visible = false;
+	Form3->SmallMedalInsects->Visible = false;
+
+//Отключаем MediaPlayers
+	Form3->MediaPlayer1->Stop();
+	Form3->MediaPlayer2->Stop();
+	Form3->MediaPlayer3->Stop();
+
+//Отключаем компоненты финализации
+	Form3->TimerFinal->Enabled = false;
+	Form3->TimerReward->Enabled = false;
+
+//Скрываем финальные текст
+	Form3->FinalText->Visible = false;
+	Form3->FinalTextHome->Visible = false;
+	Form3->FinalTextWild->Visible = false;
+	Form3->FinalTextAir->Visible = false;
+	Form3->FinalTextWater->Visible = false;
+	Form3->FinalTextInsects->Visible = false;
+}
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//Сохр. стартовые координаты для анимации и позиционирования....................
+void REPOSITION_FORM3()
+{
+//Image1........................
+	//Масштабирование:
+	Form3->Image1->Width = Form3->Width / 2 - Form3->Image1->Position->X; //Делаем ширину меньше 50% ширины Form3
+	Form3->Image1->Height = Form3->Height / 2 - Form3->Image1->Position->Y + 1; //Делаем высоту меньше 50% высоты Form3
+
+	//Позиционирование:
+	Form3->Image1->Position->X = Form3->Width / 30; //Подгоняем
+	Form3->Image1->Position->Y = Form3->Height / 11; //Отступ с верху
+
+//Image2........................
+	//Масштабирование:
+	Form3->Image2->Width = Form3->Image1->Width; //Берем ширину от Image1
+	Form3->Image2->Height = Form3->Image1->Height; //Берем высоту от Image1
+
+	//Позиционирование:
+	Form3->Image2->Position->X = Form3->Image1->Position->X + Form3->Image1->Width + 4; //Позиционируем от Image1
+	Form3->Image2->Position->Y = Form3->Image1->Position->Y;
+
+//Image3........................
+
+	//Масштабирование:
+	Form3->Image3->Width = Form3->Image1->Width; //Берем ширину от Image1
+	Form3->Image3->Height = Form3->Image1->Height; //Берем высоту от Image1
+
+	//Позиционирование:
+	Form3->Image3->Position->X = Form3->Image1->Position->X; //Дублируем от Image1
+	Form3->Image3->Position->Y = Form3->Image1->Position->Y + Form3->Image1->Height + 4; //Позиционируем по вертикали от Image1
+
+//Image4........................
+	//Масштабирование:
+	Form3->Image4->Width = Form3->Image1->Width; //Берем ширину от Image1
+	Form3->Image4->Height = Form3->Image1->Height; //Берем высоту от Image1
+
+	//Позиционирование:
+	Form3->Image4->Position->X = Form3->Image3->Position->X + Form3->Image3->Width + 4; //Позиционируем от Image3
+	Form3->Image4->Position->Y = Form3->Image2->Position->Y + Form3->Image2->Height + 4; //Позиционируем по вертикали от Image2
+}
+
+void POSITION_FORM3()
+{
+//Image1........................
+	//Масштабирование:
+	Form3->Image1->Width = Form3->Width / 2 - Form3->Image1->Position->X; //Делаем ширину меньше 50% ширины Form3
+	Form3->Image1->Height = Form3->Height / 2 - Form3->Image1->Position->Y + 1; //Делаем высоту меньше 50% высоты Form3
+
+	//Позиционирование:
+	Form3->Image1->Position->X = Form3->Width / 30; //Подгоняем
+	Form3->Image1->Position->Y = Form3->Height / 11; //Отступ с верху
+
+//Image2........................
+	//Масштабирование:
+	Form3->Image2->Width = Form3->Image1->Width; //Берем ширину от Image1
+	Form3->Image2->Height = Form3->Image1->Height; //Берем высоту от Image1
+
+	//Позиционирование:
+	Form3->Image2->Position->X = Form3->Image1->Position->X + Form3->Image1->Width + 4; //Позиционируем от Image1
+	Form3->Image2->Position->Y = Form3->Image1->Position->Y;
+
+//Image3........................
+
+	//Масштабирование:
+	Form3->Image3->Width = Form3->Image1->Width; //Берем ширину от Image1
+	Form3->Image3->Height = Form3->Image1->Height; //Берем высоту от Image1
+
+	//Позиционирование:
+	Form3->Image3->Position->X = Form3->Image1->Position->X; //Дублируем от Image1
+	Form3->Image3->Position->Y = Form3->Image1->Position->Y + Form3->Image1->Height + 4; //Позиционируем по вертикали от Image1
+
+//Image4........................
+	//Масштабирование:
+	Form3->Image4->Width = Form3->Image1->Width; //Берем ширину от Image1
+	Form3->Image4->Height = Form3->Image1->Height; //Берем высоту от Image1
+
+	//Позиционирование:
+	Form3->Image4->Position->X = Form3->Image3->Position->X + Form3->Image3->Width + 4; //Позиционируем от Image3
+	Form3->Image4->Position->Y = Form3->Image2->Position->Y + Form3->Image2->Height + 4; //Позиционируем по вертикали от Image2
+
+//Loading (label).............................
+	Form3->Loading->Position->X = Form3->Width / 2 - Form3->Loading->Width / 2;
+	Form3->Loading->Position->Y = Form3->Height - Form3->Loading->Height - 18;
+
+//LabelTextScore (label) + LabelScore (label)........
+	Form3->LabelTextScore->Position->X = Form3->Width / 2 - Form3->LabelTextScore->Width / 2;
+	Form3->LabelScore->Position->X = Form3->LabelTextScore->Position->X + Form3->LabelTextScore->Width;
+
+	Form3->LabelTextScore->Position->Y = Form3->Height / 7;
+	Form3->LabelScore->Position->Y = Form3->LabelTextScore->Position->Y;
+
+	//Выводим кол-во ошибок
+	Form3->LabelTextErrorScore->Position->X = Form3->Width / 2;
+	Form3->LabelErrorScore->Position->X = Form3->LabelTextErrorScore->Position->X + Form3->LabelTextErrorScore->Width;
+
+	Form3->LabelTextErrorScore->Position->Y = Form3->LabelTextScore->Position->Y + Form3->LabelTextScore->Height * 2;
+	Form3->LabelErrorScore->Position->Y = Form3->LabelTextScore->Position->Y; //Дублируем высоту от рядом стоящего текста
+
+//LabelError.........................................
+	Form3->LabelTextErrorScore->Position->X = Form3->Width / 2 - Form3->LabelTextErrorScore->Width / 2;
+	Form3->LabelErrorScore->Position->X = Form3->LabelTextErrorScore->Position->X + Form3->LabelTextErrorScore->Width;
+
+	Form3->LabelTextErrorScore->Position->Y = Form3->LabelTextScore->Position->Y + Form3->LabelTextScore->Height * 2; //Отталкиваемся от вышестоящего текста
+	Form3->LabelErrorScore->Position->Y = Form3->LabelTextErrorScore->Position->Y; //Дублируем высоту от рядом стоящего текста
+
+//1ый листик....................
+	//Масштабирование:
+	Form3->Leaflet1->Position->X = Form3->Width - 55;
+	Form3->Leaflet1->Position->Y = -25;	//Т.е. начало падение начинается из за верха формы как бы с верху
+
+	//Сохранение координат:
+	F3_LeafletY1 = Form3->Leaflet1->Position->Y;
+	F3_LeafletX1 = Form3->Leaflet1->Position->X;
+	F3_i1 = Form3->Leaflet1->Position->Y; //Для падения
+	F3_j1 = Form3->Leaflet1->Position->X; //Для раскачивания лево / право
+
+//2ой листик....................
+	//Масштабирование:
+	Form3->Leaflet2->Position->X = Form3->Width - 45;
+	Form3->Leaflet2->Position->Y = -25;	//Т.е. начало падение начинается из за верха формы как бы с верху
+
+	//Сохранение координат:
+	F3_LeafletY2 = Form3->Leaflet2->Position->Y;
+	F3_LeafletX2 = Form3->Leaflet2->Position->X;
+	F3_i2 = Form3->Leaflet2->Position->Y; //Для падения
+	F3_j2 = Form3->Leaflet2->Position->X; //Для раскачивания лево / право
+
+//3ий листик....................
+	//Масштабирование:
+	Form3->Leaflet3->Position->X = 15;
+	Form3->Leaflet3->Position->Y = -25;	//Т.е. начало падение начинается из за верха формы как бы с верху
+
+	//Сохранение координат:
+	F3_LeafletY3 = Form3->Leaflet3->Position->Y;
+	F3_i3 = Form3->Leaflet3->Position->Y; //Для падения
+
+//SphereQuest шарик.............
+	//Масштабирование:
+	Form3->SphereQuest->Position->X = Form3->Width / 2; //Середина Form3
+	Form3->SphereQuest->Position->Y = Form3->Height + 50; //Т.е. заносим SQ за низ видимой формы
+
+	//Сохранение координат:
+	SphereQuestX1 = Form3->SphereQuest->Position->X;
+	SphereQuestY1 = Form3->SphereQuest->Position->Y;
+
+	F3_SQ_i1 = Form3->SphereQuest->Position->Y; //Сохраняем координаты для "взлета"
+	F3_SQ_j1 = Form3->SphereQuest->Position->X; //Сохраняем координаты для раскачивания лево / право
+
+//SmallMedals...................
+	Form3->SmallMedalHome->Width = 100;
+	Form3->SmallMedalWild->Width = 75;
+	Form3->SmallMedalAir->Width = 75;
+	Form3->SmallMedalWater->Width = 75;
+	Form3->SmallMedalInsects->Width = 75;
+
+	Form3->SmallMedalHome->Height = 100;
+	Form3->SmallMedalWild->Height = 125;
+	Form3->SmallMedalAir->Height = 125;
+	Form3->SmallMedalWater->Height = 125;
+	Form3->SmallMedalInsects->Height = 125;
+
+	//SmallHome
+	Form3->SmallMedalHome->Position->X = Form3->Width / 2 - Form3->SmallMedalHome->Width / 2;
+	Form3->SmallMedalHome->Position->Y = Form3->LabelTextErrorScore->Position->Y + Form3->LabelTextErrorScore->Height * 3;
+
+	//SmallWild
+	Form3->SmallMedalWild->Position->X = Form3->SmallMedalHome->Position->X + Form3->SmallMedalWild->Width + 15 + 25; //15 - стандартный отступ, 25 - добиваем до 100 от ширины Home
+	Form3->SmallMedalWild->Position->Y = Form3->SmallMedalHome->Position->Y; //От SmallHome
+
+	//SmallInsects
+	Form3->SmallMedalInsects->Position->X = Form3->SmallMedalHome->Position->X - Form3->SmallMedalWild->Width - 15;
+	Form3->SmallMedalInsects->Position->Y = Form3->SmallMedalHome->Position->Y; //От SmallHome
+
+	//SmallAir
+	Form3->SmallMedalAir->Position->X = Form3->SmallMedalInsects->Position->X - Form3->SmallMedalInsects->Width - 15;
+	Form3->SmallMedalAir->Position->Y = Form3->SmallMedalHome->Position->Y; //От SmallHome
+
+	//SmallWater
+	Form3->SmallMedalWater->Position->X = Form3->SmallMedalWild->Position->X + Form3->SmallMedalWild->Width + 15;
+	Form3->SmallMedalWater->Position->Y = Form3->SmallMedalHome->Position->Y; //От SmallHome
+
+//Medals........................
+	Form3->MedalHome->Width = 125 * 2;
+	Form3->MedalWild->Width = 125;
+	Form3->MedalAir->Width = 125;
+	Form3->MedalWater->Width = 125;
+	Form3->MedalInsects->Width = 125;
+
+	Form3->MedalHome->Height = 125 * 2;
+	Form3->MedalWild->Height = 200;
+	Form3->MedalAir->Height = 200;
+	Form3->MedalWater->Height = 200;
+	Form3->MedalInsects->Height = 200;
+
+	//Home
+	Form3->MedalHome->Position->X = Form3->Width / 4 - Form3->MedalHome->Width / 2;
+	Form3->MedalHome->Position->Y = Form3->LabelTextScore->Position->Y - 15;
+
+	//Wild
+	Form3->MedalWild->Position->X = Form3->Width / 3 - Form3->MedalWild->Width / 2;
+	Form3->MedalWild->Position->Y = Form3->LabelTextScore->Position->Y;
+
+	//Air
+	Form3->MedalAir->Position->X = Form3->Width / 3 - Form3->MedalHome->Width / 2;
+	Form3->MedalAir->Position->Y = Form3->LabelTextScore->Position->Y;
+
+	//Water
+	Form3->MedalWater->Position->X = Form3->Width / 3 - Form3->MedalHome->Width / 2;
+	Form3->MedalWater->Position->Y = Form3->LabelTextScore->Position->Y;
+
+	//Insects
+	Form3->MedalInsects->Position->X = Form3->Width / 3 - Form3->MedalHome->Width / 2;
+	Form3->MedalInsects->Position->Y = Form3->LabelTextScore->Position->Y;
+
+//FinalTest
+	Form3->FinalText->Position->X = Form3->Image4->Position->X;
+	Form3->FinalText->Position->Y = Form3->Height / 10;
+
+	Form3->FinalTextHome->Position->X = Form3->Image4->Position->X;
+	Form3->FinalTextHome->Position->Y = Form3->FinalText->Position->Y + Form3->FinalText->Height * 2;
+
+	Form3->FinalTextWild->Position->X = Form3->Image4->Position->X;
+	Form3->FinalTextWild->Position->Y = Form3->FinalText->Position->Y + Form3->FinalText->Height * 2;
+
+	Form3->FinalTextAir->Position->X = Form3->Image4->Position->X;
+	Form3->FinalTextAir->Position->Y = Form3->FinalText->Position->Y + Form3->FinalText->Height * 2;
+
+	Form3->FinalTextWater->Position->X = Form3->Image4->Position->X;
+	Form3->FinalTextWater->Position->Y = Form3->FinalText->Position->Y + Form3->FinalText->Height * 2;
+
+	Form3->FinalTextInsects->Position->X = Form3->Image4->Position->X;
+	Form3->FinalTextInsects->Position->Y = Form3->FinalText->Position->Y + Form3->FinalText->Height * 2;
+}
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//Позиционирование Error1, 2, 3, 4..............................................
+void ERROR_1()
+{
+	Form3->Error1->Position->X = Form3->Image1->Position->X + Form3->Image1->Width / 2 - Form3->Error1->Width / 2; //Центруем крестик
+	Form3->Error1->Position->Y = Form3->Image1->Position->Y + Form3->Image1->Height / 2 - Form3->Error1->Height / 2;
+}
+
+void ERROR_2()
+{
+	Form3->Error2->Position->X = Form3->Image2->Position->X + Form3->Image2->Width / 2 - Form3->Error2->Width / 2; //Центруем крестик
+	Form3->Error2->Position->Y = Form3->Image2->Position->Y + Form3->Image2->Height / 2 - Form3->Error2->Height / 2;
+}
+
+void ERROR_3()
+{
+	Form3->Error3->Position->X = Form3->Image3->Position->X + Form3->Image3->Width / 2 - Form3->Error3->Width / 2; //Центруем крестик
+	Form3->Error3->Position->Y = Form3->Image3->Position->Y + Form3->Image3->Height / 2 - Form3->Error3->Height / 2;
+}
+
+void ERROR_4()
+{
+	Form3->Error4->Position->X = Form3->Image4->Position->X + Form3->Image4->Width / 2 - Form3->Error4->Width / 2; //Центруем крестик
+	Form3->Error4->Position->Y = Form3->Image4->Position->Y + Form3->Image4->Height / 2 - Form3->Error4->Height / 2;
+}
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//Позиционирование Score's......................................................
+
+//AddScore1.............
+void ADD_SCORE1_IMAGE1()
+{
+//Масштабирование:
+	Form3->AddScore1->Position->X = Form3->Image1->Position->X + Form3->Image1->Width / 2 - Form3->AddScore1->Width / 2;
+	Form3->AddScore1->Position->Y = Form3->Image1->Position->Y + Form3->Image1->Height / 2 - Form3->AddScore1->Height / 2;
+
+//Сохранение координат:
+	//Сохранение координат:
+	F3_AddScore1Y1 = Form3->AddScore1->Position->Y;
+	F3_i4 = Form3->AddScore1->Position->Y;
+}
+
+void ADD_SCORE1_IMAGE2()
+{
+//Масштабирование:
+	Form3->AddScore1->Position->X = Form3->Image2->Position->X + Form3->Image2->Width / 2 - Form3->AddScore1->Width / 2;
+	Form3->AddScore1->Position->Y = Form3->Image2->Position->Y + Form3->Image2->Height / 2 - Form3->AddScore1->Height / 2;
+
+//Сохранение координат:
+	F3_AddScore1Y1 = Form3->AddScore1->Position->Y;
+	F3_i4 = Form3->AddScore1->Position->Y;
+}
+
+void ADD_SCORE1_IMAGE3()
+{
+//Масштабирование:
+	Form3->AddScore1->Position->X = Form3->Image3->Position->X + Form3->Image3->Width / 2 - Form3->AddScore1->Width / 2;
+	Form3->AddScore1->Position->Y = Form3->Image3->Position->Y + Form3->Image3->Height / 2 - Form3->AddScore1->Height / 2;
+
+//Сохранение координат:
+	F3_AddScore1Y1 = Form3->AddScore1->Position->Y;
+	F3_i4 = Form3->AddScore1->Position->Y;
+}
+
+void ADD_SCORE1_IMAGE4()
+{
+//Масштабирование:
+	Form3->AddScore1->Position->X = Form3->Image4->Position->X + Form3->Image4->Width / 2 - Form3->AddScore1->Width / 2;
+	Form3->AddScore1->Position->Y = Form3->Image4->Position->Y + Form3->Image4->Height / 2 - Form3->AddScore1->Height / 2;
+
+//Сохранение координат:
+	F3_AddScore1Y1 = Form3->AddScore1->Position->Y;
+	F3_i4 = Form3->AddScore1->Position->Y;
+}
+
+//AddScore2.............
+void ADD_SCORE2_IMAGE1()
+{
+//Масштабирование:
+	Form3->AddScore2->Position->X = Form3->Image1->Position->X + Form3->Image1->Width / 2 - Form3->AddScore2->Width / 2;
+	Form3->AddScore2->Position->Y = Form3->Image1->Position->Y + Form3->Image1->Height / 2 - Form3->AddScore2->Height / 2;
+
+//Сохранение координат:
+	F3_AddScore2Y1 = Form3->AddScore2->Position->Y;
+	F3_i5 = Form3->AddScore2->Position->Y;
+}
+
+void ADD_SCORE2_IMAGE2()
+{
+//Масштабирование:
+	Form3->AddScore2->Position->X = Form3->Image2->Position->X + Form3->Image2->Width / 2 - Form3->AddScore2->Width / 2;
+	Form3->AddScore2->Position->Y = Form3->Image2->Position->Y + Form3->Image2->Height / 2 - Form3->AddScore2->Height / 2;
+
+//Сохранение координат:
+	F3_AddScore2Y1 = Form3->AddScore2->Position->Y;
+	F3_i5 = Form3->AddScore2->Position->Y;
+}
+
+void ADD_SCORE2_IMAGE3()
+{
+//Масштабирование:
+	Form3->AddScore2->Position->X = Form3->Image3->Position->X + Form3->Image3->Width / 2 - Form3->AddScore2->Width / 2;
+	Form3->AddScore2->Position->Y = Form3->Image3->Position->Y + Form3->Image3->Height / 2 - Form3->AddScore2->Height / 2;
+
+//Сохранение координат:
+	F3_AddScore2Y1 = Form3->AddScore2->Position->Y;
+	F3_i5 = Form3->AddScore2->Position->Y;
+}
+
+void ADD_SCORE2_IMAGE4()
+{
+//Масштабирование:
+	Form3->AddScore2->Position->X = Form3->Image4->Position->X + Form3->Image4->Width / 2 - Form3->AddScore2->Width / 2;
+	Form3->AddScore2->Position->Y = Form3->Image4->Position->Y + Form3->Image4->Height / 2 - Form3->AddScore2->Height / 2;
+
+//Сохранение координат:
+	F3_AddScore2Y1 = Form3->AddScore2->Position->Y;
+	F3_i5 = Form3->AddScore2->Position->Y;
+}
+
+//SubtractScore........
+void SUB_SCORE_IMAGE1()
+{
+//Масштабирование:
+	Form3->SubtractScore->Position->X = Form3->Image1->Position->X + Form3->Image1->Width / 2 - Form3->SubtractScore->Width / 2;
+	Form3->SubtractScore->Position->Y = Form3->Image1->Position->Y + Form3->Image1->Height / 2 - Form3->SubtractScore->Height / 2;
+
+//Сохранение координат:
+	F3_SubScoreY1 = Form3->SubtractScore->Position->Y;
+	F3_i6 = Form3->SubtractScore->Position->Y;
+}
+
+void SUB_SCORE_IMAGE2()
+{
+//Масштабирование:
+	Form3->SubtractScore->Position->X = Form3->Image2->Position->X + Form3->Image2->Width / 2 - Form3->SubtractScore->Width / 2;
+	Form3->SubtractScore->Position->Y = Form3->Image2->Position->Y + Form3->Image2->Height / 2 - Form3->SubtractScore->Height / 2;
+
+//Сохранение координат:
+	F3_SubScoreY1 = Form3->SubtractScore->Position->Y;
+	F3_i6 = Form3->SubtractScore->Position->Y;
+}
+
+void SUB_SCORE_IMAGE3()
+{
+//Масштабирование:
+	Form3->SubtractScore->Position->X = Form3->Image3->Position->X + Form3->Image3->Width / 2 - Form3->SubtractScore->Width / 2;
+	Form3->SubtractScore->Position->Y = Form3->Image3->Position->Y + Form3->Image3->Height / 2 - Form3->SubtractScore->Height / 2;
+
+//Сохранение координат:
+	F3_SubScoreY1 = Form3->SubtractScore->Position->Y;
+	F3_i6 = Form3->SubtractScore->Position->Y;
+}
+
+void SUB_SCORE_IMAGE4()
+{
+//Масштабирование:
+	Form3->SubtractScore->Position->X = Form3->Image4->Position->X + Form3->Image4->Width / 2 - Form3->SubtractScore->Width / 2;
+	Form3->SubtractScore->Position->Y = Form3->Image4->Position->Y + Form3->Image4->Height / 2 - Form3->SubtractScore->Height / 2;
+
+//Сохранение координат:
+	F3_SubScoreY1 = Form3->SubtractScore->Position->Y;
+	F3_i6 = Form3->SubtractScore->Position->Y;
+}
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//Скрывем Error1, 2, 3, 4.......................................................
+void HIDE_ERROR()
+{
+	Form3->Error1->Visible = false;
+	Form3->Error2->Visible = false;
+	Form3->Error3->Visible = false;
+	Form3->Error4->Visible = false;
+}
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//Воспроизводим звук ошибки.....................................................
+void SOUND_ERROR()
+{
+	Form3->MediaPlayer2->Stop();
+	Form3->MediaPlayer2->FileName = IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Error.mp3";
+	Form3->MediaPlayer2->Play();
+}
+//...										 								 ...
+//.....                                       						       .....
+//.........                                                            .........
+//...................                                        ...................
+//Финализация нормального теста..................................................
+void FINAL_NORMAL_TEST()
+{
+	//Отключаем текущие звуки
+	Form3->MediaPlayer1->Stop();
+	Form3->MediaPlayer2->Stop();
+	Form3->MediaPlayer3->Stop();
+
+	Form3->TimerAsk1->Enabled = false;
+	Form3->TimerAskVoice->Enabled = false;
+	Form3->TimerAsk2->Enabled = false;
+	Form3->TimerAnimalSound->Enabled = false;
+	Form3->TimerTestAsk->Enabled = false;
+	Form3->TimerTestVoice->Enabled = false;
+
+	//Отключаем картинки....
+	Form3->Image1->Visible = false;
+	Form3->Image2->Visible = false;
+	Form3->Image3->Visible = false;
+	Form3->Image4->Visible = false;
+
+	//Отключаем крестик Ошибок..
+	Form3->Error1->Visible = false;
+	Form3->Error2->Visible = false;
+	Form3->Error3->Visible = false;
+	Form3->Error4->Visible = false;
+
+	//Отключаем повременной вопрос SphereQuest
+	Form3->TimerSphereQuestEnd->Enabled = false;
+	Form3->TimerSphereQuestStart->Enabled = false;
+	Form3->TimerSphereQuestLeft->Enabled = false;
+	Form3->TimerSphereQuestRight->Enabled = false;
+
+	Form3->SphereQuest->Visible = false;
+
+	//Включаем музыку!!!
+	Form3->MediaPlayer1->Stop();
+	Form3->MediaPlayer1->FileName = IncludeTrailingPathDelimiter(System::Ioutils::TPath::GetDocumentsPath()) + "Final.mp3";
+	Form3->MediaPlayer1->Play();
+
+	Form3->TimerFinal->Interval = 20000; //Длинна песни для HAR test
+	Form3->TimerFinal->Enabled = true; //Включаем таймер, который финализирует песню, т.е. завершает ее и включает таймер закрытия.
+}
+//---------------------------------------------------------------------------
+__fastcall TForm3::TForm3(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm3::FormCreate(TObject *Sender)
+{
+	Form3->Error1->Visible = false;
+	Form3->Error2->Visible = false;
+	Form3->Error3->Visible = false;
+	Form3->Error4->Visible = false;
+
+	Form3->AddScore1->Visible = false;
+	Form3->AddScore2->Visible = false;
+	Form3->SubtractScore->Visible = false;
+
+	Form3->SphereQuest->Visible = false;
+
+	Form3->HARD->Visible = false;
+
+	Form3->SmallMedalWild->Visible = false;
+	Form3->SmallMedalWater->Visible = false;
+	Form3->SmallMedalInsects->Visible = false;
+	Form3->SmallMedalHome->Visible = false;
+	Form3->SmallMedalAir->Visible = false;
+
+	Form3->Memo1->Visible = false;
+
+	Form3->MedalWild->Visible = false;
+	Form3->MedalWater->Visible = false;
+	Form3->MedalInsects->Visible = false;
+	Form3->MedalHome->Visible = false;
+	Form3->MedalAir->Visible = false;
+
+	Form3->Loading->Visible = false;
+
+	Form3->LabelTextScore->Visible = false;
+	Form3->LabelScore->Visible = false;
+	Form3->LabelTextErrorScore->Visible = false;
+	Form3->LabelErrorScore->Visible = false;
+
+	Form3->FinalText->Visible = false;
+	Form3->FinalTextHome->Visible = false;
+	Form3->FinalTextWild->Visible = false;
+	Form3->FinalTextAir->Visible = false;
+	Form3->FinalTextWater->Visible = false;
+	Form3->FinalTextInsects->Visible = false;
+
+   	HARD_TEST = 1;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::FormActivate(TObject *Sender)
+{
+	POSITION_FORM3();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::FormClose(TObject *Sender, TCloseAction &Action)
+{
+	RESET_PICTURES_FORM3();
+	HIDE_ERROR();
+	RESET_FORM3();
+
+	Form2->Loading->Visible = false; //Скрываем Загрузку, на Form2
+	Form2->Close();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::FormHide(TObject *Sender)
+{
+	RESET_PICTURES_FORM3();
+	HIDE_ERROR();
+	RESET_FORM3();
+
+	Form2->Loading->Visible = false; //Скрываем Загрузку, на Form2
+	Form2->Close();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::FormKeyUp(TObject *Sender, WORD &Key, System::WideChar &KeyChar,
+          TShiftState Shift)
+{
+	if(Key == vkHardwareBack)
+	{
+		Key = 0; //Присваиваем событию кнопки "Назад" - ни какого действия
+
+		Loading->Visible = true; //Включаем уведомление о загрузке
+		TimerClose->Enabled = true;
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::FormResize(TObject *Sender)
+{
+	POSITION_FORM3();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::TimerLeaflet3StartTimer(TObject *Sender)
+{
+	if(F3_i3 < Form3->Height + 40)
+	{
+		F3_i3++;
+		Leaflet3->Position->Y = F3_i3;
+
+		if(F3_i3 == Form3->Height + 40) //Отключаем падение
+		{
+			Leaflet3->Visible = false;
+			TimerLeaflet3Start->Enabled = false;
+
+			TimerLeaflet3End->Interval = Random(30000);
+			TimerLeaflet3End->Enabled = true;
+		}
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::TimerLeaflet3EndTimer(TObject *Sender)
+{
+	Leaflet3->Position->Y = F3_LeafletY3; 		//Возвращаем изначальную высоту для 3го листика
+	F3_i3 = F3_LeafletY3; 						//Сбрасываем высоту, что бы можно было вновь поднять листик3
+
+	Leaflet3->Visible = true;
+
+	TimerLeaflet3End->Enabled = false;
+	TimerLeaflet3Start->Enabled = true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::TimerLeaflet1StartTimer(TObject *Sender)
+{
+	if(F3_i1 < Form3->Height + 40)
+	{
+		F3_i1++;
+		Leaflet1->Position->Y = F3_i1;
+
+		if(F3_i1 == Form3->Height + 40) //Отключаем падение и раскачку
+		{
+			Leaflet1->Visible = false;
+			TimerLeaflet1Start->Enabled = false;
+
+			TimerLeaflet1Left->Enabled = false;
+			TimerLeaflet1Right->Enabled = false;
+
+			TimerLeaflet1End->Interval = Random(25000);
+			TimerLeaflet1End->Enabled = true;
+		}
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::TimerLeaflet1EndTimer(TObject *Sender)
+{
+	Leaflet1->Position->Y = F3_LeafletY1; 		//Возвращаем изначальную высоту для 1го листика
+	Leaflet1->Position->X = F3_LeafletX1; 		//Возвращаем изначальную высоту для 1го листика
+	F3_i1 = F3_LeafletY1; 						//Сбрасываем высоту, что бы можно было вновь поднять листик1
+	F3_j1 = F3_LeafletX1; 						//Сбрасываем горизонтальные координаты, что бы можно было вновь "качать" листик1
+
+	Leaflet1->Visible = true;
+
+	TimerLeaflet1End->Enabled = false;
+	TimerLeaflet1Start->Enabled = true;
+
+	TimerLeaflet1Left->Enabled = true;
+	TimerLeaflet1Right->Enabled = false;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::TimerLeaflet1LeftTimer(TObject *Sender)
+{
+//Делаем падение листочка1 в лево
+	if(Leaflet1->Position->X -20 < Leaflet1->Position->X)
+	{
+		F3_j1--;
+		Leaflet1->Position->X = F3_j1;
+
+		if(Leaflet1->Position->X <= F3_LeafletX1 - 20) //, где LeafletX1 - изначальные координаты по X оси
+		{
+			TimerLeaflet1Right->Enabled = true;
+			TimerLeaflet1Left->Enabled = false;
+		}
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::TimerLeaflet1RightTimer(TObject *Sender)
+{
+//Делаем падение листочка1 в право
+	if(Leaflet1->Position->X < F3_LeafletX1 + 20)
+	{
+		F3_j1++;
+		Leaflet1->Position->X = F3_j1;
+
+		if(Leaflet1->Position->X >= F3_LeafletX1 + 20) //, где LeafletX1 - изначальные координаты по X оси
+		{
+			TimerLeaflet1Left->Enabled = true;
+			TimerLeaflet1Right->Enabled = false;
+		}
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::TimerLeaflet2StartTimer(TObject *Sender)
+{
+	if(F3_i2 < Form3->Height + 40)
+	{
+		F3_i2++;
+		Leaflet2->Position->Y = F3_i2;
+
+		if(F3_i2 == Form3->Height + 40) //Отключаем падение и раскачку
+		{
+			Leaflet2->Visible = false;
+			TimerLeaflet2Start->Enabled = false;
+
+			TimerLeaflet2Left->Enabled = false;
+			TimerLeaflet2Right->Enabled = false;
+
+			TimerLeaflet2End->Interval = Random(45000);
+			TimerLeaflet2End->Enabled = true;
+		}
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::TimerLeaflet2EndTimer(TObject *Sender)
+{
+	Leaflet2->Position->Y = F3_LeafletY2; 		//Возвращаем изначальную высоту для 2го листика
+	Leaflet2->Position->X = F3_LeafletX2; 		//Возвращаем изначальную высоту для 2го листика
+	F3_i2 = F3_LeafletY2; 						//Сбрасываем высоту, что бы можно было вновь поднять листик2
+	F3_j2 = F3_LeafletX2; 						//Сбрасываем горизонтальные координаты, что бы можно было вновь "качать" листик2
+
+	Leaflet2->Visible = true;
+
+	TimerLeaflet2End->Enabled = false;
+	TimerLeaflet2Start->Enabled = true;
+
+	TimerLeaflet2Left->Enabled = false;
+	TimerLeaflet2Right->Enabled = true;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::TimerLeaflet2LeftTimer(TObject *Sender)
+{
+//Делаем падение листочка2 в лево
+	if(Leaflet2->Position->X -15 < Leaflet2->Position->X)
+	{
+		F3_j2--;
+		Leaflet2->Position->X = F3_j2;
+
+		if(Leaflet2->Position->X <= F3_LeafletX2 - 15) //, где LeafletX2 - изначальные координаты по X оси
+		{
+			TimerLeaflet2Right->Enabled = true;
+			TimerLeaflet2Left->Enabled = false;
+		}
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm3::TimerLeaflet2RightTimer(TObject *Sender)
+{
+//Делаем падение листочка2 в право
+	if(Leaflet2->Position->X < F3_LeafletX2 + 15)
+	{
+		F3_j2++;
+		Leaflet2->Position->X = F3_j2;
+
+		if(Leaflet2->Position->X >= F3_LeafletX2 + 15) //, где LeafletX2 - изначальные координаты по X оси
+		{
+			TimerLeaflet2Left->Enabled = true;
+			TimerLeaflet2Right->Enabled = false;
+		}
+	}
+}
+//---------------------------------------------------------------------------
+
